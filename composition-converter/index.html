@@ -1,0 +1,303 @@
+<head>
+    <title>Alloy composition converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #fff;
+        }
+
+        h1,
+        h4,
+        h6,
+        label {
+            text-align: center;
+        }
+
+        #mainContainer {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        label {
+            margin-bottom: 15px;
+        }
+
+        select,
+        input[type="text"] {
+            width: 75px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        #entriesDiv {
+            margin-bottom: 20px;
+        }
+
+        .entryRow {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .entryRow select {
+            margin-right: 10px;
+        }
+
+        .quantityInput {
+            width: 50px;
+        }
+
+        .Buttons {
+            height: 35px;
+            min-width: 20px;
+            font-size: medium;
+            background-color: rgb(43,42,51);
+            color: rgba(244,244,247,255);
+            border-radius: 5px;
+        }
+
+        #resultsDiv {
+            background-color: #444;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 0 auto;
+            max-width: 800px;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #666;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #555;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        .formRow {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .formRow label {
+            width: 70px;
+            flex-shrink: 0;
+            margin-right: 10px;
+        }
+
+        .formRow select,
+        .formRow input {
+            width: 50px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        .centeredContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        window.onload = addNewElement;
+
+        const elementMass = {"": null,
+            "H": 1.00794, "He": 4.002602,
+            "Li": 6.941, "Be": 9.012182, "B": 10.811, "C": 12.0107, "N": 14.0067, "O": 15.9994, "F": 18.9984032, "Ne": 20.1797,
+            "Na": 22.98976928, "Mg": 24.305, "Al": 26.9815386, "Si": 28.0855, "P": 30.973762, "S": 32.065, "Cl": 35.453, "Ar": 39.948,
+            "K": 39.0983, "Ca": 40.078, "Sc": 44.955912, "Ti": 47.867, "V": 50.9415, "Cr": 51.9961, "Mn": 54.938045, "Fe": 55.845, "Co": 58.933195, "Ni": 58.6934, "Cu": 63.546, "Zn": 65.409, "Ga": 69.723, "Ge": 72.64, "As": 74.9216, "Se": 78.96, "Br": 79.904, "Kr": 83.798,
+            "Rb": 85.4678, "Sr": 87.62, "Y": 88.90585, "Zr": 91.224, "Nb": 92.90638, "Mo": 95.94, "Tc": 98, "Ru": 101.07, "Rh": 102.9055, "Pd": 106.42, "Ag": 107.8682, "Cd": 112.411, "In": 114.818, "Sn": 118.71, "Sb": 121.76, "Te": 127.6, "I": 126.90447, "Xe": 131.293,
+            "Cs": 132.9054519, "Ba": 137.327, "La": 138.90547, "Ce": 140.116, "Pr": 140.90765, "Nd": 144.242, "Pm": 145, "Sm": 150.36, "Eu": 151.964, "Gd": 157.25, "Tb": 158.92535, "Dy": 162.5, "Ho": 164.93032, "Er": 167.259, "Tm": 168.93421, "Yb": 173.04, "Lu": 174.967, "Hf": 178.49, "Ta": 180.94788, "W": 183.84, "Re": 186.207, "Os": 190.23, "Ir": 192.217, "Pt": 195.084, "Au": 196.966569, "Hg": 200.59, "Tl": 204.3833, "Pb": 207.2, "Bi": 208.9804, "Po": 210, "At": 210, "Rn": 220,
+            "Fr": 223, "Ra": 226, "Ac": 227, "Th": 232.03806, "Pa": 231.03588, "U": 238.02891, "Np": 237, "Pu": 244, "Am": 243, "Cm": 247, "Bk": 247, "Cf": 251, "Es": 252, "Fm": 257, "Md": 258, "No": 259, "Lr": 262, "Rf": 267, "Db": 268, "Sg": 269, "Bh": 270, "Hs": 270, "Mt": 278, "Ds": 281, "Rg": 282, "Cn": 285, "Nh": 286, "Fl": 289, "Mc": 290, "Lv": 293, "Ts": 294, "Og": 2949
+        }
+
+        function addNewElement() {
+
+            // Get the main Div in which all the other divs will be added
+            var entriesDiv = document.getElementById('entriesDiv');
+
+            // Create a new div for holding text and button input elements
+            var newDiv = document.createElement('div');
+
+            // Create a new text input
+            var newDropdown = document.createElement('select');
+            newDropdown.setAttribute("name", "elementSelect");
+            
+            for (let element in elementMass) {
+                newDropdownOption = document.createElement("option");
+                newDropdownOption.value = element;
+                newDropdownOption.text = element;
+                newDropdown.add(newDropdownOption);
+            }
+
+            // Create buttons for removing inputs
+            var newInput = document.createElement('input');
+            newInput.type = "text";
+            newInput.name = "elementQuantity";
+            newInput.value = "1";
+            newInput.setAttribute("class", "quantityInput")
+
+
+            var newDelButton = document.createElement('input');
+            newDelButton.type = "button";
+            newDelButton.value = " − ";
+            newDelButton.setAttribute("class", "Buttons");
+
+            // Append new text input to the newDiv
+            newDiv.appendChild(newDropdown);
+            newDiv.appendChild(newInput);
+
+            // Append new button inputs to the newDiv
+            newDiv.appendChild(newDelButton);
+
+            // Append newDiv input to the entriesDiv div
+            entriesDiv.appendChild(newDiv);
+
+            // Add a handler to button for deleting the newDiv from the entriesDiv
+            newDelButton.onclick = function() {
+                entriesDiv.removeChild(newDiv);
+            };
+        }
+
+        function getElementAmounts() {
+            let eel = {}
+            for (let i = 0; i < elementMass.length; i++) {
+                eel[els[i]] = ams[i]
+            }
+            var elementAmounts = {}
+            var elements = document.getElementsByName("elementSelect");
+            var quantities = document.getElementsByName("elementQuantity");
+            for (let i = 0; i < document.getElementsByName("elementSelect").length; i++)
+                if (quantities[i].value != "" && elements[i].value != "")
+                    elementAmounts[elements[i].value] = Number(quantities[i].value);
+            return elementAmounts;
+        }
+
+        function convertPartsToAtomicPercent(elementAmounts) {
+            let totalParts = 0;
+            for (let element in elementAmounts)
+                totalParts += elementAmounts[element];
+            let elementAtomicPercentage = {}
+            for (let element in elementAmounts)
+                elementAtomicPercentage[element] = elementAmounts[element]/totalParts;
+            return elementAtomicPercentage;
+        }
+
+        function convertAtomicToWeightFraction(elementAtomicPercentage) {
+            let ratio = 0;
+            for (let element in elementAtomicPercentage)
+                ratio += elementAtomicPercentage[element] * elementMass[element];
+            let elementWeightPercentage = {};
+            for (let element in elementAtomicPercentage)
+                elementWeightPercentage[element] = elementAtomicPercentage[element] * elementMass[element] / ratio;
+            return elementWeightPercentage
+        }
+
+        function generateTableHead(table, data) {
+            let thead = table.createTHead();
+            let row = thead.insertRow();
+            let th = document.createElement("th");
+            let text = document.createTextNode("Element");
+            th.appendChild(text);
+            row.appendChild(th);
+            for (let key in data) {
+                th = document.createElement("th");
+                text = document.createTextNode(key);
+                th.appendChild(text);
+                row.appendChild(th);
+            }
+        }
+
+        function generateTable(table, data) {
+            let row = table.insertRow();
+            let cell = row.insertCell();
+            let bold = document.createElement('strong');
+            let text = document.createTextNode('Wt.%');
+            bold.appendChild(text);
+            cell.appendChild(bold);
+            for (key in data) {
+                cell = row.insertCell();
+                text = document.createTextNode((100 * data[key]).toFixed(4));
+                cell.appendChild(text);
+            }
+        }
+
+        function renderResultsTable(elementAmounts) {
+            var resultsDiv = document.getElementById('resultsDiv');
+            var tableDiv = document.createElement('div');
+            var table = document.createElement('table');
+            table.setAttribute("style", `width: ${elementAmounts.length * 15}px;`)
+            generateTableHead(table, elementAmounts);
+            generateTable(table, elementAmounts);
+            tableDiv.appendChild(table);
+            resultsDiv.appendChild(tableDiv);
+        }
+
+        function resetResultsTable() {
+            let resultsDiv = document.getElementById("resultsDiv");
+            resultsDiv.textContent = "";
+        }
+
+        function convert() {
+            resetResultsTable()
+            renderResultsTable(convertAtomicToWeightFraction(convertPartsToAtomicPercent(getElementAmounts())));
+        }
+    </script>
+
+    <div id="mainContainer" class="centeredContainer">
+        <div>
+            <h1>Alloy composition unit converter</h1>
+            <h4>
+                This utility converts alloy composition units.</br>
+                Enter the components of the desired alloy below, then click Conver.</br>
+                The element number should be set by adding element options in Add element button.</br>
+            </h4>
+        </div>
+        <h6>Currently only conversion from parts to Wt.% are supported</h6>
+        <div id="entriesDiv"></div>
+        <div>
+            <input type="button" class="Buttons" value="Add element" onClick="addNewElement();">
+            <input type="button" class="Buttons" value="Convert " onClick="convert();">
+        </div>
+    </div>
+    <div id="resultsDiv"></div>
+</body>
